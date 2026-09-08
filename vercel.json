@@ -3,7 +3,7 @@
   "framework": null,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
-  "installCommand": "pip install -r requirements.txt && cd frontend && npm install",
+  "installCommand": "cd frontend && npm install",
   "functions": {
     "api/index.py": {
       "runtime": "@vercel/python@4.0.0",
