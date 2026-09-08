@@ -10,9 +10,9 @@ services:
           name: mayan-portfolio-db
           property: connectionString
       - key: ADMIN_EMAIL
-        value: teacher@schoolboard.local
+        value: mayan9@gmail.com
       - key: ADMIN_PASSWORD_HASH
-        value: $2b$12$dxbU0strxpxb64MGR6L8buQH/8nfcZfoOxf84g/MUwhKOE7l74jtu
+        value: $2b$12$lkMq2pwFsYY5eyLWbgTN0OG8IwVR7KyHjATkjX5MVMX4INwW0PBOi
       - key: SECRET_KEY
         generateValue: true
       - key: FRONTEND_URL
