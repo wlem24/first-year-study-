@@ -18,10 +18,17 @@ class TokenResponse(BaseModel):
 
 
 class AdminOut(BaseModel):
+    id: int
     email: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AdminUpdate(BaseModel):
+    email: Optional[str] = None
+    current_password: Optional[str] = None
+    new_password: Optional[str] = None
 
 
 class MessageResponse(BaseModel):

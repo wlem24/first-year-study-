@@ -11,6 +11,7 @@ from slowapi.util import get_remote_address
 from app.core.config import settings
 from app.core.security import (
     verify_password,
+    get_password_hash,
     create_access_token,
     create_refresh_token,
     verify_token,
@@ -18,7 +19,7 @@ from app.core.security import (
 from app.database import get_db
 from app.auth import get_current_admin
 from app.models import Admin, AuditLog
-from app.schemas import LoginRequest, TokenResponse, AdminOut, MessageResponse
+from app.schemas import LoginRequest, TokenResponse, AdminOut, MessageResponse, AdminUpdate
 
 logger = logging.getLogger("auth")
 
@@ -160,4 +161,28 @@ async def logout(response: Response):
 @router.get("/me", response_model=AdminOut)
 async def get_me(admin: Admin = Depends(get_current_admin)):
     """Return the current authenticated admin's profile."""
+    return admin
+
+@router.put("/me", response_model=AdminOut)
+async def update_me(
+    body: AdminUpdate,
+    admin: Admin = Depends(get_current_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update admin email or password."""
+    if body.new_password:
+        if not body.current_password or not verify_password(body.current_password, admin.hashed_password):
+            raise HTTPException(status_code=400, detail="كلمة المرور الحالية غير صحيحة")
+        admin.hashed_password = get_password_hash(body.new_password)
+        
+    if body.email:
+        clean_email = body.email.strip().lower()
+        if clean_email != admin.email:
+            result = await db.execute(select(Admin).where(Admin.email == clean_email))
+            if result.scalar_one_or_none():
+                 raise HTTPException(status_code=400, detail="البريد الإلكتروني مستخدم بالفعل")
+            admin.email = clean_email
+
+    await db.commit()
+    await db.refresh(admin)
     return admin

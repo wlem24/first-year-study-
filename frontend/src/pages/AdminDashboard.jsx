@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { getPosts, deletePost, syncPadlet } from '../services/api'
 import UploadForm from '../components/UploadForm'
 import StudentUploadModal from '../components/StudentUploadModal'
+import SettingsModal from '../components/SettingsModal'
 
 export default function AdminDashboard() {
   const { logout, admin } = useAuth()
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [editingPost, setEditingPost] = useState(null)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [syncingId, setSyncingId] = useState(null)
@@ -30,7 +32,7 @@ export default function AdminDashboard() {
 
   useEffect(() => { loadPosts() }, [loadPosts])
 
-  const handleLogout = async () => { await logout(); navigate('/') }
+  const handleLogout = async () => { await logout(); navigate('/login') }
   const handleCreate = () => { setEditingPost(null); setShowModal(true) }
   const handleEdit = (post) => { setEditingPost(post); setShowModal(true) }
   const handleSaved = () => { setShowModal(false); setEditingPost(null); loadPosts() }
@@ -71,6 +73,9 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex flex-wrap justify-center md:justify-end gap-3 w-full md:w-auto">
+            <button onClick={() => setShowSettings(true)} className="px-5 py-2.5 rounded-full bg-slate-50 border-2 border-slate-200 text-slate-700 font-bold text-sm cursor-pointer hover:bg-slate-100 transition-all flex items-center justify-center">
+              ⚙️ إعدادات
+            </button>
             <Link to="/" className="px-5 py-2.5 rounded-full bg-slate-50 border-2 border-slate-200 text-slate-700 no-underline text-sm font-bold hover:bg-slate-100 transition-all flex items-center justify-center">
               👁 شاهدي حائطي
             </Link>
@@ -186,6 +191,11 @@ export default function AdminDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SettingsModal 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+      />
     </div>
   )
 }
