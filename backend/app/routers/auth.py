@@ -50,7 +50,7 @@ def _set_auth_cookies(
         secure=secure_flag,
         samesite=samesite_val,
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        path="/api/v1/auth",
+        path="/",
     )
 
 
@@ -59,7 +59,7 @@ def _clear_auth_cookies(response: Response, is_https: bool = True) -> None:
     secure_flag = is_https
     samesite_val = "none" if is_https else "lax"
     response.delete_cookie("access_token", path="/", secure=secure_flag, samesite=samesite_val)
-    response.delete_cookie("refresh_token", path="/api/v1/auth", secure=secure_flag, samesite=samesite_val)
+    response.delete_cookie("refresh_token", path="/", secure=secure_flag, samesite=samesite_val)
 
 
 # ── POST /auth/login ──────────────────────────────────────────────
