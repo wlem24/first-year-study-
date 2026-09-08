@@ -29,9 +29,9 @@ limiter = Limiter(key_func=get_remote_address)
 
 IS_VERCEL = bool(os.environ.get("VERCEL"))
 
-# Cookie settings — Strict SameSite, Secure in production
-COOKIE_SAMESITE = "strict"
-COOKIE_SECURE = IS_VERCEL  # True on HTTPS (Vercel), False locally
+# Cookie settings — Cross-domain auth requires SameSite=None and Secure=True
+COOKIE_SAMESITE = "none"
+COOKIE_SECURE = True
 
 
 def _set_auth_cookies(
