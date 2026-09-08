@@ -34,11 +34,11 @@ logger = logging.getLogger("app")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: init DB and create upload directories. Shutdown: log info."""
-    if not IS_VERCEL:
-        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-        os.makedirs(os.path.join(settings.UPLOAD_DIR, "images"), exist_ok=True)
-        os.makedirs(os.path.join(settings.UPLOAD_DIR, "audio"), exist_ok=True)
-        os.makedirs(os.path.join(settings.UPLOAD_DIR, "files"), exist_ok=True)
+    upload_base = settings.EFFECTIVE_UPLOAD_DIR
+    os.makedirs(upload_base, exist_ok=True)
+    os.makedirs(os.path.join(upload_base, "images"), exist_ok=True)
+    os.makedirs(os.path.join(upload_base, "audio"), exist_ok=True)
+    os.makedirs(os.path.join(upload_base, "files"), exist_ok=True)
     await init_db()
     logger.info("School Board application started (vercel=%s)", IS_VERCEL)
     yield
@@ -104,13 +104,13 @@ async def add_security_headers(request: Request, call_next):
 
 # ── Static Files (Uploads: drawings, audio, worksheets) ─────────────
 
-if not IS_VERCEL:
-    from fastapi.staticfiles import StaticFiles
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-    os.makedirs(os.path.join(settings.UPLOAD_DIR, "images"), exist_ok=True)
-    os.makedirs(os.path.join(settings.UPLOAD_DIR, "audio"), exist_ok=True)
-    os.makedirs(os.path.join(settings.UPLOAD_DIR, "files"), exist_ok=True)
-    app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+from fastapi.staticfiles import StaticFiles
+upload_base = settings.EFFECTIVE_UPLOAD_DIR
+os.makedirs(upload_base, exist_ok=True)
+os.makedirs(os.path.join(upload_base, "images"), exist_ok=True)
+os.makedirs(os.path.join(upload_base, "audio"), exist_ok=True)
+os.makedirs(os.path.join(upload_base, "files"), exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=upload_base), name="uploads")
 
 
 # ── Routers (versioned: /api/v1) ──────────────────────────────────

@@ -38,8 +38,15 @@ class Settings(BaseSettings):
         return bool(os.environ.get("VERCEL"))
 
     @property
+    def EFFECTIVE_UPLOAD_DIR(self) -> str:
+        """Return writable upload directory on Vercel or local filesystem."""
+        return "/tmp/uploads" if self.IS_VERCEL else self.UPLOAD_DIR
+
+    @property
     def ASYNC_DATABASE_URL(self) -> str:
         """Return an async-compatible database URL."""
+        if self.IS_VERCEL and ("school_board.db" in self.DATABASE_URL or "portfolio.db" in self.DATABASE_URL):
+            return "sqlite+aiosqlite:////tmp/school_board.db"
         url = self.DATABASE_URL
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql+asyncpg://", 1)
