@@ -30,9 +30,16 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
-    await apiLogout()
-    setIsAuthenticated(false)
-    setAdmin(null)
+    try {
+      await apiLogout()
+    } catch (err) {
+      console.warn('API logout failed, clearing local state anyway.')
+    } finally {
+      localStorage.clear()
+      sessionStorage.clear()
+      setIsAuthenticated(false)
+      setAdmin(null)
+    }
   }
 
   return (
