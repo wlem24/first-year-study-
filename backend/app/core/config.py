@@ -1,0 +1,53 @@
+"""Application configuration loaded from environment variables."""
+
+import os
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    """Settings for the 1st-Grade School Board & Portfolio platform."""
+
+    DATABASE_URL: str = "sqlite+aiosqlite:///./school_board.db"
+
+    # Parent / Teacher Admin Credentials
+    ADMIN_EMAIL: str = "teacher@schoolboard.local"
+    ADMIN_PASSWORD_HASH: str = "$2b$12$dxbU0strxpxb64MGR6L8buQH/8nfcZfoOxf84g/MUwhKOE7l74jtu"
+
+    # JWT Security
+    SECRET_KEY: str = "your-secret-key-change-this-to-something-random-and-secure"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 14
+
+    # Frontend / CORS
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # File Uploads (25MB limit for school drawings, audio recordings, and worksheets)
+    UPLOAD_DIR: str = "uploads"
+    MAX_FILE_SIZE_MB: int = 25
+
+    # Padlet Classroom Integration
+    PADLET_API_KEY: str = ""
+    PADLET_BOARD_ID: str = ""
+
+    # ── Computed Properties ────────────────────────────────────────
+
+    @property
+    def IS_VERCEL(self) -> bool:
+        """Detect if running on Vercel."""
+        return bool(os.environ.get("VERCEL"))
+
+    @property
+    def ASYNC_DATABASE_URL(self) -> str:
+        """Return an async-compatible database URL."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
+
+    model_config = {"env_file": ".env", "extra": "ignore"}
+
+
+settings = Settings()

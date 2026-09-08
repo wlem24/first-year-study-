@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --font-cairo: 'Cairo', 'Tajawal', sans-serif;
+  --font-tajawal: 'Tajawal', 'Cairo', sans-serif;
+  --color-cork: #fcf8f2;
+  --color-primary: #7c3aed;
+  --color-accent-pink: #ec4899;
+  --color-accent-blue: #0284c7;
+  --color-accent-yellow: #eab308;
+  --color-accent-green: #10b981;
+  --color-pastel-yellow: #fef08a;
+  --color-pastel-pink: #fbcfe8;
+  --color-pastel-blue: #bae6fd;
+  --color-pastel-green: #bbf7d0;
+  --color-pastel-purple: #e9d5ff;
+  --color-pastel-orange: #fed7aa;
+  --color-text-dark: #1e1b4b;
+  --color-text-muted: #64748b;
+  --color-text-light: #94a3b8;
+}
+
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-cairo);
+  background-color: var(--color-cork);
+  background-image:
+    radial-gradient(#e2e8f0 1.2px, transparent 1.2px),
+    radial-gradient(#f1f5f9 1.2px, var(--color-cork) 1.2px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+  color: var(--color-text-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  direction: rtl;
+}
+
+/* ── Washi Tape Decorations ─────────────────────────────────────── */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  width: 90px;
+  height: 24px;
+  background: rgba(254, 240, 138, 0.85);
+  border-left: 3px dashed rgba(234, 179, 8, 0.4);
+  border-right: 3px dashed rgba(234, 179, 8, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+  pointer-events: none;
+}
+.washi-tape-pink { background: rgba(251, 207, 232, 0.85); border-color: rgba(236, 72, 153, 0.4); }
+.washi-tape-blue { background: rgba(186, 230, 253, 0.85); border-color: rgba(2, 132, 199, 0.4); }
+.washi-tape-green { background: rgba(187, 247, 208, 0.85); border-color: rgba(16, 185, 129, 0.4); }
+
+/* ── Shimmer Skeleton ───────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Star Glow ──────────────────────────────────────────────────── */
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+  font-size: 1.1rem;
+  color: #fbbf24;
+  filter: drop-shadow(0 1px 2px rgba(245, 158, 11, 0.4));
+}
+
+/* ── Reduced Motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #c084fc; }
