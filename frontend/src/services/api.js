@@ -112,4 +112,9 @@ export async function likePost(id) {
   return res.data
 }
 
+export async function updateProfile(data) {
+  const res = await api.put('/auth/me', data)
+  return res.data
+}
+
 export default api
