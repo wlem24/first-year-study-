@@ -5,7 +5,7 @@ import { updateProfile } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
 export default function SettingsModal({ isOpen, onClose }) {
-  const { admin } = useAuth()
+  const { admin, refreshUser } = useAuth()
   const [email, setEmail] = useState(admin?.email || '')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -30,6 +30,7 @@ export default function SettingsModal({ isOpen, onClose }) {
       }
 
       await updateProfile(data)
+      if (refreshUser) await refreshUser()
       toast.success('تم تحديث البيانات بنجاح! ✨')
       onClose()
       setCurrentPassword('')

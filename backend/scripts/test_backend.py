@@ -31,15 +31,15 @@ async def run_tests():
         print("  [PASS] Bad login returned 401 Unauthorized")
 
         print("\n--- 3. Testing Admin Login (Email & Password) ---")
-        login_res = await client.post("/api/v1/auth/login", json={"email": "admin@portfolio.local", "password": "changeme123"})
+        login_res = await client.post("/api/v1/auth/login", json={"email": "mayan9@gmail.com", "password": "maYan@ram6"})
         assert login_res.status_code == 200, f"Login failed: {login_res.text}"
-        assert "access_token" in client.cookies
+        assert "access_token" in client.cookies or "access_token" in login_res.json()
         print("  [PASS] Admin Login succeeded, cookie set")
 
         print("\n--- 4. Testing /api/v1/auth/me ---")
         me_res = await client.get("/api/v1/auth/me")
         assert me_res.status_code == 200
-        assert me_res.json()["email"] == "admin@portfolio.local"
+        assert me_res.json()["email"] == "mayan9@gmail.com"
         print(f"  [PASS] /auth/me returned: {me_res.json()}")
 
         print("\n--- 5. Testing Project Creation (Multipart with Tags & Files) ---")

@@ -44,8 +44,19 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const refreshUser = async () => {
+    try {
+      const data = await apiCheckAuth()
+      setAdmin(data)
+      setIsAuthenticated(true)
+    } catch {
+      setIsAuthenticated(false)
+      setAdmin(null)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, admin, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, admin, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

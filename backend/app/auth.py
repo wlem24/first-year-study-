@@ -16,8 +16,12 @@ async def get_current_admin(
     request: Request,
     db: AsyncSession = Depends(get_db),
 ) -> Admin:
-    """Extract JWT from httpOnly cookie, verify it, and return the Admin ORM object."""
+    # Check httpOnly cookie first, then fallback to Authorization: Bearer <token>
     token: str | None = request.cookies.get("access_token")
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header[7:].strip()
 
     if not token:
         raise HTTPException(

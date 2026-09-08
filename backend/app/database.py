@@ -3,7 +3,7 @@
 import logging
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.core.config import settings
 from app.core.security import get_password_hash
@@ -43,11 +43,16 @@ async def get_db():
 
 
 async def init_db():
-    """Create all tables and seed the admin user from env vars."""
+    """Create all tables, auto-migrate schema, and seed the admin user from env vars."""
     from app.models import Base, Admin  # imported here to avoid circular imports
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        try:
+            await conn.execute(text("ALTER TABLE posts ADD COLUMN likes INTEGER DEFAULT 0"))
+            logger.info("Auto-migrated: added 'likes' column to posts.")
+        except Exception:
+            pass  # Column already exists
 
     async with AsyncSessionLocal() as session:
         admin_email = settings.ADMIN_EMAIL.strip().lower()

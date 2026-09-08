@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./school_board.db"
 
     # Parent / Teacher Admin Credentials
-    ADMIN_EMAIL: str = "teacher@schoolboard.local"
-    ADMIN_PASSWORD_HASH: str = "$2b$12$dxbU0strxpxb64MGR6L8buQH/8nfcZfoOxf84g/MUwhKOE7l74jtu"
+    ADMIN_EMAIL: str = "mayan9@gmail.com"
+    ADMIN_PASSWORD_HASH: str = "$2b$12$lkMq2pwFsYY5eyLWbgTN0OG8IwVR7KyHjATkjX5MVMX4INwW0PBOi"
 
     # JWT Security
     SECRET_KEY: str = "your-secret-key-change-this-to-something-random-and-secure"

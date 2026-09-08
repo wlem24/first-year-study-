@@ -15,6 +15,8 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     message: str = "Login successful"
     token_type: str = "bearer"
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
 
 
 class AdminOut(BaseModel):

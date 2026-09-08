@@ -25,15 +25,22 @@ export default function AdminLogin() {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await login(email, password)
+      await login(email.trim().toLowerCase(), password)
       toast.success('مرحباً بك في استوديو الإبداع! 🎒🎨')
       navigate('/admin')
     } catch (err) {
       const status = err?.response?.status
+      const detail = err?.response?.data?.detail
       if (status === 429) {
         toast.error('محاولات كثيرة. انتظري بضع دقائق.')
+      } else if (detail) {
+        toast.error(
+          detail === 'Incorrect email or password'
+            ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة!'
+            : detail
+        )
       } else {
-        toast.error('البريد الإلكتروني أو كلمة المرور غير صحيحة!')
+        toast.error('تعذر الاتصال بالخادم أو جاري تشغيل الخادم السحابي...')
       }
     } finally {
       setSubmitting(false)
