@@ -18,6 +18,8 @@ export function AuthProvider({ children }) {
       .catch(() => {
         setIsAuthenticated(false)
         setAdmin(null)
+        localStorage.clear()
+        sessionStorage.clear()
       })
       .finally(() => setLoading(false))
   }, [])
