@@ -51,6 +51,7 @@ app = FastAPI(
     title="First-Grade Digital School Board & Portfolio API",
     version="1.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
 )
 
 # Rate limiter setup
@@ -113,18 +114,26 @@ os.makedirs(os.path.join(upload_base, "files"), exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=upload_base), name="uploads")
 
 
-# ── Routers (versioned: /api/v1) ──────────────────────────────────
+# ── Routers (versioned: /api/v1 and /v1 for Vercel Serverless compatibility) ──
 
 app.include_router(auth_router.router, prefix="/api/v1")
 app.include_router(posts_router.router, prefix="/api/v1")
+app.include_router(auth_router.router, prefix="/v1")
+app.include_router(posts_router.router, prefix="/v1")
 
 
-# ── Root ───────────────────────────────────────────────────────────
+# ── Health & Root Endpoints ─────────────────────────────────────────
 
 @app.get("/")
+@app.get("/api")
+@app.get("/api/")
+@app.get("/api/health")
+@app.get("/health")
 async def root():
     return {
         "status": "ok",
         "app": "First-Grade Digital School Board & Portfolio API",
         "version": "1.0.0",
     }
+
+

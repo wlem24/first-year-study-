@@ -75,21 +75,31 @@ async def login(
     """Authenticate admin, set JWT cookies, and return tokens in response body."""
     client_ip = request.client.host if request.client else "unknown"
 
-    admin, access_token, refresh_token = await AuthService.authenticate_admin(
-        db=db,
-        email=body.email,
-        password=body.password,
-        client_ip=client_ip,
-    )
+    try:
+        admin, access_token, refresh_token = await AuthService.authenticate_admin(
+            db=db,
+            email=body.email,
+            password=body.password,
+            client_ip=client_ip,
+        )
 
-    _set_auth_cookies(response, access_token, refresh_token, is_https=_is_https(request))
+        _set_auth_cookies(response, access_token, refresh_token, is_https=_is_https(request))
 
-    return TokenResponse(
-        message="Login successful",
-        token_type="bearer",
-        access_token=access_token,
-        refresh_token=refresh_token,
-    )
+        return TokenResponse(
+            message="Login successful",
+            token_type="bearer",
+            access_token=access_token,
+            refresh_token=refresh_token,
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        import traceback
+        logger.error("Login fatal error: %s\n%s", exc, traceback.format_exc())
+        raise HTTPException(
+            status_code=500,
+            detail=f"Login Error: {type(exc).__name__}: {exc}\n{traceback.format_exc()}",
+        )
 
 
 # ── POST /auth/refresh ────────────────────────────────────────────

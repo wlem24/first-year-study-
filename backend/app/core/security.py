@@ -6,25 +6,32 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
+import bcrypt
 from app.core.config import settings
 
 logger = logging.getLogger("security")
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 # ── Password Hashing ──────────────────────────────────────────────
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain-text password against a bcrypt hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plain-text password against a bcrypt hash reliably."""
+    try:
+        if isinstance(hashed_password, str):
+            hashed_bytes = hashed_password.encode("utf-8")
+        else:
+            hashed_bytes = hashed_password
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_bytes)
+    except Exception as e:
+        logger.warning("verify_password exception: %s", e)
+        return False
 
 
 def get_password_hash(password: str) -> str:
     """Return the bcrypt hash of a password."""
-    return pwd_context.hash(password)
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
 
 # ── JWT Tokens ─────────────────────────────────────────────────────

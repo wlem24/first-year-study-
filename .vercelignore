@@ -1,5 +1,4 @@
 .github
 *.pyc
 __pycache__
-*.db
 .pytest_cache

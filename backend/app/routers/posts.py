@@ -18,6 +18,7 @@ router = APIRouter(prefix="/posts", tags=["posts"])
 
 # ── Public Endpoints (Kid & Family Friendly) ──────────────────────
 
+@router.get("", response_model=PaginatedResponse[PostListOut])
 @router.get("/", response_model=PaginatedResponse[PostListOut])
 async def list_posts(
     page: int = Query(1, ge=1),
@@ -51,6 +52,7 @@ async def like_post(post_id: int, db: AsyncSession = Depends(get_db)):
 
 # ── Teacher / Parent Admin Endpoints ──────────────────────────────
 
+@router.post("", response_model=PostOut, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=PostOut, status_code=status.HTTP_201_CREATED)
 async def create_post(
     title: str = Form(...),
