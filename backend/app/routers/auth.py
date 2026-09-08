@@ -92,13 +92,15 @@ async def login(
 ):
     """Authenticate admin and set JWT cookies. Rate-limited to 5 attempts / 15 min."""
     client_ip = request.client.host if request.client else "unknown"
+    
+    clean_email = body.email.strip().lower()
 
-    result = await db.execute(select(Admin).where(Admin.email == body.email))
+    result = await db.execute(select(Admin).where(Admin.email == clean_email))
     admin = result.scalar_one_or_none()
 
     if admin is None or not verify_password(body.password, admin.hashed_password):
-        logger.warning("Failed login attempt for email='%s' from IP=%s", body.email, client_ip)
-        await _log_audit(db, "LOGIN_FAILED", f"email={body.email}", ip_address=client_ip)
+        logger.warning("Failed login attempt for email='%s' from IP=%s", clean_email, client_ip)
+        await _log_audit(db, "LOGIN_FAILED", f"email={clean_email}", ip_address=client_ip)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

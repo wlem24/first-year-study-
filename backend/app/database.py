@@ -50,17 +50,20 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
 
     async with AsyncSessionLocal() as session:
+        admin_email = settings.ADMIN_EMAIL.strip().lower()
         result = await session.execute(
-            select(Admin).where(Admin.email == settings.ADMIN_EMAIL)
+            select(Admin).where(Admin.email == admin_email)
         )
         admin = result.scalar_one_or_none()
         if admin is None:
             new_admin = Admin(
-                email=settings.ADMIN_EMAIL,
+                email=admin_email,
                 hashed_password=settings.ADMIN_PASSWORD_HASH,
             )
             session.add(new_admin)
             await session.commit()
-            logger.info("Admin user '%s' created.", settings.ADMIN_EMAIL)
+            logger.info("Admin user '%s' created.", admin_email)
         else:
-            logger.info("Admin user '%s' already exists.", settings.ADMIN_EMAIL)
+            admin.hashed_password = settings.ADMIN_PASSWORD_HASH
+            await session.commit()
+            logger.info("Admin user '%s' credentials synchronized.", admin_email)
